@@ -6,13 +6,9 @@ The sponsor for the D2L Instructor API project is Michigan State University. The
 
 ## Group Members:
 - Olivia Sheng Qiu <qiuolivi@msu.edu>
-
 - Pranay Rahul Pentaparthy <pentapar@msu.edu>
-
 - Erin Elizabeth Sawyer <sawyerer@msu.edu>
-
 - Jonah Masaki Wehner <wehnerjo@msu.edu>
-
 - Jiaye Xie <xiejiaye@msu.edu>
 
 ## Milestones and Project Information:

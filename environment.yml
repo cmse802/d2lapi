@@ -9,7 +9,3 @@ dependencies:
   - matplotlib
   - pandas
   - ipywidgets
-  - io
-  - IPython.display
-  - sys
-  - os

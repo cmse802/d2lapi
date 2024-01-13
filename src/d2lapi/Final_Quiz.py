@@ -61,8 +61,13 @@ def answerKeyOnTop(attempt_details, quiz_details):
     #answerkey['Org Defined ID'], answerkey["Attempt #"], answerkey ["Username"], answerkey ["FirstName"], \
     #answerkey["LastName"]= ['sdaf@#$345afs#$%&^%^$&%^%^$&asfd*3df',1, "answerKey",
     #                        "Answer", "Key"]
+    
+    #TODO Figure out why this is here.  Changing the random index dosn't seem to work. No idea what this is doing.
     answerkey['Org Defined ID'], answerkey["Attempt #"], answerkey["Username"], answerkey["FirstName"], \
     answerkey["LastName"] = ['00000000000000000000d#4fgV6Hj!#2fgd]', 1, "answerKey", "Answer", "Key"]
+    #answerkey["LastName"] =  ['Row_For_Answer_Key000000000000000000', 1, "answerKey", "Answer", "Key"]
+    #a
+    # answerkey["Username"] = 
     attempt_details = pd.concat([answerkey,attempt_details ], ignore_index=True )
     return attempt_details
 
@@ -79,7 +84,7 @@ def trufalse_mc_check(answer_match):
     1: binary value representing "Checked"
     0: binary value representing "Unchecked"
     '''
-    return 1 if answer_match == 'Checked' else 0
+    return True if answer_match == 'Checked' else False
 
 def answer_match_check(answer_match):
     '''
@@ -93,6 +98,7 @@ def answer_match_check(answer_match):
     answer_match: a row value with student response as string in "Answer Match" column
     '''
     return answer_match
+
 
 def answer_check(answer):
     '''
@@ -161,7 +167,7 @@ def qparts_df_creation(official):
     outputs:
     returns dataframe with question part number and answer columns 
     '''
-    wide_format_df = pd.DataFrame(columns=['Org Defined ID', 'Attempt #', 'FirstName', 'LastName',
+    wide_format_df = pd.DataFrame(columns=['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Username',
                                            'Question#', 'Answer'])
 
     # Create a dictionary that maps each question type to the corresponding column in the 'official' dataframe
@@ -367,10 +373,11 @@ def completeQuiz(attemptdetails, questiondetails, qa_label_key = False):
     question_parts_df_col_list = qparts_df_column_list_creation(question_parts_df)
     question_whole_df = qwhole_df_creation(mod_qorder_user_details)
     wide_format_data = dataframe_link(question_parts_df_col_list, question_parts_df, question_whole_df)
+    
     if qa_label_key == True:
         return wide_format_data, qa_label_data
-    else:
-        return wide_format_data
+    
+    return wide_format_data
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
