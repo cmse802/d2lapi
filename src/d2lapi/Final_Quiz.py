@@ -183,6 +183,7 @@ def qparts_df_creation(official):
     wide_format_df['Attempt #'] = official['Attempt #']
     wide_format_df['FirstName'] = official['FirstName']
     wide_format_df['LastName'] = official['LastName']
+    wide_format_df['Username'] = official['Username']    
     wide_format_df['Question#'] = official['label']
     wide_format_df['Answer'] = qtype_col
 
@@ -199,7 +200,7 @@ def qparts_df_creation(official):
         .apply(lambda x: answer_match_check(x))
 
     # Select the required columns and return the resulting dataframe
-    return wide_format_df[['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Question#', 'Answer']]
+    return wide_format_df[['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Username', 'Question#', 'Answer']]
 
 def qwhole_df_creation(official):
     '''
@@ -222,6 +223,7 @@ def qwhole_df_creation(official):
                                                     'Attempt #': official['Attempt #'][i],
                                                     'FirstName': official['FirstName'][i],
                                                     'LastName': official['LastName'][i],
+                                                    'Username': official['Username'][i],
                                                     'Q#': official['newQ#'][i],
                                                     'Answer': trufalse_mc_score(official, i)}).to_frame().T],
                                                     ignore_index=True)
@@ -231,6 +233,7 @@ def qwhole_df_creation(official):
                                                     'Attempt #': official['Attempt #'][i],
                                                     'FirstName': official['FirstName'][i],
                                                     'LastName': official['LastName'][i],
+                                                    'Username': official['Username'][i],
                                                     'Q#': official['newQ#'][i],
                                                     'Answer': official['Answer Match'][i]}).to_frame().T],
                                                     ignore_index=True)
@@ -240,11 +243,12 @@ def qwhole_df_creation(official):
                                                     'Attempt #': official['Attempt #'][i],
                                                     'FirstName': official['FirstName'][i],
                                                     'LastName': official['LastName'][i],
+                                                    'Username': official['Username'][i],
                                                     'Q#': official['newQ#'][i],
                                                     'Answer': official['Answer'][i]}).to_frame().T],
                                                     ignore_index=True)
 
-    return question_df[['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Q#', 'Answer']]
+    return question_df[['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Username', 'Q#', 'Answer']]
 
 def qparts_df_column_list_creation(new_data):
     '''
@@ -262,6 +266,7 @@ def qparts_df_column_list_creation(new_data):
     q_list = []
 
     for question in new_data[new_data['Org Defined ID'] == new_data['Org Defined ID'].unique()[1]]['Question#']:
+        print(question)
         if question not in q_list:
             q_list.append(question)
             temp_columns.append(str(question))
@@ -296,10 +301,11 @@ def user_details_question_formatting(qparts_df_col_list, question_parts_df):
                                                        'Attempt #': question_parts_df['Attempt #'][i],
                                                        'FirstName': question_parts_df['FirstName'][i],
                                                        'LastName': question_parts_df['LastName'][i],
+                                                       'Username': official['Username'][i],
                                                        'Question#': question_parts_df['Question#'][i],
                                                        'Answer': question_parts_df['Answer'][i]}).to_frame().T],
                                                         ignore_index=True)
-    return wide_format_df[['Org Defined ID', 'Attempt #', 'FirstName', 'LastName', 'Question#', 'Answer']]
+    return wide_format_df[['Org Defined ID', 'Username', 'Attempt #', 'FirstName', 'LastName', 'Question#', 'Answer']]
 
 def question_parts_df_pivot(question_parts_df, col_list):
     '''
@@ -312,10 +318,11 @@ def question_parts_df_pivot(question_parts_df, col_list):
     outputs:
     mod_question_parts_df: pivotted question parts dataframe with question parts column renaming
     '''
-    mod_question_parts_df = pd.pivot_table(question_parts_df, index=['Org Defined ID', 'Attempt #', 'FirstName', 'LastName'],
+    mod_question_parts_df = pd.pivot_table(question_parts_df, index=['Org Defined ID', 'Username', 'Attempt #', 'FirstName', 'LastName'],
                             values='Answer', columns=['Question#'], aggfunc='first')
     mod_question_parts_df = mod_question_parts_df.reindex(col_list, axis=1)
     mod_question_parts_df.columns = ['Q' + str(i) for i in mod_question_parts_df.columns]
+    #print(mod_question_parts_df.columns)
     return mod_question_parts_df
 
 def question_whole_df_pivot(question_whole_df):
@@ -328,9 +335,10 @@ def question_whole_df_pivot(question_whole_df):
     outputs:
     mod_question_df: pivotted question whole dataframe with question whole column renaming
     '''
-    mod_question_df = pd.pivot_table(question_whole_df, index=['Org Defined ID', 'Attempt #', 'FirstName', 'LastName'],
+    mod_question_df = pd.pivot_table(question_whole_df, index=['Org Defined ID', 'Username', 'Attempt #', 'FirstName', 'LastName'],
                                      values='Answer', columns=['Q#'], aggfunc='first')
-    mod_question_df.columns = ['Q' + str(j) for j in mod_question_df.columns]
+    mod_question_df.columns = ['Q' + str(j) for j in mod_question_df.columns] 
+    #print(mod_question_df.columns)
     return mod_question_df
 
 def dataframe_link(col_list, new_data, q_data):
@@ -370,7 +378,10 @@ def completeQuiz(attemptdetails, questiondetails, qa_label_key = False):
     #qdict = question_dictionary(mod_qorder_user_details)
     qa_label_data = qa_label_dictionary(mod_qorder_user_details)
     question_parts_df = qparts_df_creation(mod_qorder_user_details)
+    print(question_parts_df)
     question_parts_df_col_list = qparts_df_column_list_creation(question_parts_df)
+    print('')
+    print(question_parts_df_col_list)
     question_whole_df = qwhole_df_creation(mod_qorder_user_details)
     wide_format_data = dataframe_link(question_parts_df_col_list, question_parts_df, question_whole_df)
     
